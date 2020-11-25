@@ -9,3 +9,17 @@ Please refer to this paper for further details on the algorithm used for the ana
 Sollberger, D., Greenhalgh, S. A., Schmelzbach, C., Van Renterghem, C., and Robertsson, J. O. A. (2018): **6-C polarization analysis using point measurements of translational and rotational ground-motion: theory and applications**, *Geophysical Journal International*, 213(1), https://doi.org/10.1093/gji/ggx542.
 
 Note that at the time of publication, the underlying code used in this analysis is still under development and some features might not yet work as intended. If you encounter any bugs or problems, please report them. You can also directly propose changes via a pull request. Any queries about this code should be directed to David Sollberger, Institute of Geophysics, ETH Zurich (david.sollberger@erdw.ethz.ch). 
+
+## Prerequisites
+The code requires the following prerequisites:
+- Obspy (Python framework for processing of seismological data)
+- PyTables
+- tqdm (Progress bar)
+
+We recommend to install them using anaconda in a new environment via:
+
+$ conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
+
+$ conda create -n 6DOF python=3.7 obspy pytables tqdm
+
+$ conda activate 6DOF
