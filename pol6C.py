@@ -12,7 +12,6 @@ from obspy.signal.tf_misfit import cwt
 from obspy.signal.util import next_pow_2
 from scipy.signal import spectrogram, hanning, convolve, hilbert
 from scipy.linalg import det, toeplitz
-from progress.bar import Bar
 from obspy import Stream, Trace
 from datetime import datetime
 import matplotlib.pyplot as plt
