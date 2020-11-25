@@ -1,6 +1,6 @@
 # Seismological processing of six degree-of-freedom ground-motion data
 
-In this notebook, you will learn how to process six degree-of-freedom ground-motion data comprised of three components of translational motion and three components of rotational motion. The data used in this tutorial was recorded on the large ring laser gyroscope ROMY in Germany (http://www.romy-erc.eu), after the 2018 M7.9 gulf of Alaska earthquake as described in the accompanying paper:  
+In this tutorial, you will learn how to process six degree-of-freedom ground-motion data comprised of three components of translational motion and three components of rotational motion. The data used in this tutorial was recorded on the large ring laser gyroscope ROMY in Germany (http://www.romy-erc.eu), after the 2018 M7.9 gulf of Alaska earthquake as described in the accompanying paper:  
 
 Sollberger, D., Igel, H., Schmelzbach, C., Edme, P., van Manen, D.-J., Bernauer, F., Yuan, S., Wassermann, J., Schreiber, U., and Robertsson, J. O. A. (2020): **Seismological processing of six degree-of-freedom ground-motion data**, *Sensors*.
 
