@@ -19,11 +19,11 @@ The code requires the following prerequisites:
 
 We recommend to install them using anaconda in a new environment via:
 
-$ conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
-
 $ conda create -n 6DOF python=3.7 
 
 $ conda activate 6DOF
+
+$ conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
 
 $ conda install obspy pytables tqdm jupyter
 
