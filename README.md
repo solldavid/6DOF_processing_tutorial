@@ -26,3 +26,13 @@ $ conda create -n 6DOF python=3.7
 $ conda activate 6DOF
 
 $ conda install obspy pytables tqdm jupyter
+
+Now clone this repository into your working directory:
+
+$ git clone https://github.com/solldavid/6DOF_processing_tutorial
+
+$ cd 6DOF_processing_tutorial
+
+You can now start the notebook by:
+
+$ jupyter notebook
