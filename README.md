@@ -15,11 +15,14 @@ The code requires the following prerequisites:
 - Obspy (Python framework for processing of seismological data)
 - PyTables
 - tqdm (Progress bar)
+- Jupyter (to run the notebook)
 
 We recommend to install them using anaconda in a new environment via:
 
 $ conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
 
-$ conda create -n 6DOF python=3.7 obspy pytables tqdm
+$ conda create -n 6DOF python=3.7 
 
 $ conda activate 6DOF
+
+$ conda install obspy pytables tqdm jupyter
