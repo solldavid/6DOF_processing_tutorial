@@ -654,38 +654,36 @@ class Estimator:
         self.dop_min = dop_min
 
         self.music_nullspace, self.music_nullspace_threshold = music_nullspace, music_nullspace_threshold
-        if self.method == 'MUSIC' or self.method == 'DOT':
-            self.evalues, self.evectors = np.linalg.eig(C)
-            indices = np.flip(np.argsort(np.real(self.evalues)))
-            self.evalues = self.evalues[indices]
-            self.evectors = self.evectors[:, indices]
+        self.evalues, self.evectors = np.linalg.eig(C)
+        indices = np.flip(np.argsort(np.real(self.evalues)))
+        self.evalues = self.evalues[indices]
+        self.evectors = self.evectors[:, indices]
 
-            u1 = self.evectors[:, 0]
-            u1 = u1 / np.linalg.norm(u1)
-            gamma = np.arctan2(2 * np.dot(u1.real, u1.imag),
+        u1 = self.evectors[:, 0]
+        u1 = u1 / np.linalg.norm(u1)
+        gamma = np.arctan2(2 * np.dot(u1.real, u1.imag),
                                np.dot(u1.real, u1.real) -
                                np.dot(u1.imag, u1.imag))
-            phi = -0.5 * gamma
+         phi = -0.5 * gamma
 
-            self.evectors = np.exp(1j * phi) * self.evectors
-            self.nspace_dim = 6 - np.argmax(
-                np.abs(self.evalues) < np.abs(self.music_nullspace_threshold * np.abs(self.evalues[0])))
-            self.nspace_dim = np.min([self.nspace_dim, 5])
-            self.dop = ((self.evalues[0] - self.evalues[1]) ** 2
-                        + (self.evalues[0] - self.evalues[2]) ** 2
-                        + (self.evalues[0] - self.evalues[3]) ** 2
-                        + (self.evalues[0] - self.evalues[4]) ** 2
-                        + (self.evalues[0] - self.evalues[5]) ** 2
-                        + (self.evalues[1] - self.evalues[2]) ** 2
-                        + (self.evalues[1] - self.evalues[3]) ** 2
-                        + (self.evalues[1] - self.evalues[4]) ** 2
-                        + (self.evalues[1] - self.evalues[5]) ** 2
-                        + (self.evalues[2] - self.evalues[3]) ** 2
-                        + (self.evalues[2] - self.evalues[4]) ** 2
-                        + (self.evalues[2] - self.evalues[5]) ** 2
-                        + (self.evalues[3] - self.evalues[4]) ** 2
-                        + (self.evalues[3] - self.evalues[5]) ** 2
-                        + (self.evalues[4] - self.evalues[5]) ** 2) / (5 * np.sum(self.evalues) ** 2)
+         self.evectors = np.exp(1j * phi) * self.evectors
+         self.nspace_dim = 6 - np.argmax(np.abs(self.evalues) < np.abs(self.music_nullspace_threshold * np.abs(self.evalues[0])))
+         self.nspace_dim = np.min([self.nspace_dim, 5])
+         self.dop = ((self.evalues[0] - self.evalues[1]) ** 2
+                       + (self.evalues[0] - self.evalues[2]) ** 2
+                       + (self.evalues[0] - self.evalues[3]) ** 2
+                       + (self.evalues[0] - self.evalues[4]) ** 2
+                       + (self.evalues[0] - self.evalues[5]) ** 2
+                       + (self.evalues[1] - self.evalues[2]) ** 2
+                       + (self.evalues[1] - self.evalues[3]) ** 2
+                       + (self.evalues[1] - self.evalues[4]) ** 2
+                       + (self.evalues[1] - self.evalues[5]) ** 2
+                       + (self.evalues[2] - self.evalues[3]) ** 2
+                       + (self.evalues[2] - self.evalues[4]) ** 2
+                       + (self.evalues[2] - self.evalues[5]) ** 2
+                       + (self.evalues[3] - self.evalues[4]) ** 2
+                       + (self.evalues[3] - self.evalues[5]) ** 2
+                       + (self.evalues[4] - self.evalues[5]) ** 2) / (5 * np.sum(self.evalues) ** 2)
 
     def solve(self):
 
