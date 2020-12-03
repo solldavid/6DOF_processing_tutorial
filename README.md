@@ -2,7 +2,7 @@
 
 In this tutorial, you will learn how to process six degree-of-freedom ground-motion data comprised of three components of translational motion and three components of rotational motion. The data used in this tutorial was recorded on the large ring laser gyroscope ROMY in Germany (http://www.romy-erc.eu), after the 2018 M7.9 gulf of Alaska earthquake as described in the accompanying paper:  
 
-Sollberger, D., Igel, H., Schmelzbach, C., Edme, P., van Manen, D.-J., Bernauer, F., Yuan, S., Wassermann, J., Schreiber, U., and Robertsson, J. O. A. (2020): **Seismological processing of six degree-of-freedom ground-motion data**, *Sensors*.
+Sollberger, D., Igel, H., Schmelzbach, C., Edme, P., van Manen, D.-J., Bernauer, F., Yuan, S., Wassermann, J., Schreiber, U., and Robertsson, J. O. A. (2020): **Seismological processing of six degree-of-freedom ground-motion data**, *Sensors*, 20(23), 6904, https://doi.org/10.3390/s20236904
 
 Please refer to this paper for further details on the algorithm used for the analysis. Additional information on 6DOF polarization analysis can be found in the following publication:
 
