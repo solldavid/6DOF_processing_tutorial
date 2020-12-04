@@ -274,7 +274,7 @@ class RotPol:
             "For P-wave analysis, vp_range, vs_range, theta_range, and phi_range need to be specified!"
 
         ss = SearchSpace(wave_type='P', vp=self.vp_range, vs=self.vs_range, theta=self.theta_range,
-                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface)
+                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface, search=self.search)
         if self.domain == 'f':
 
             for j in tqdm(range(S.shape[0] * S.shape[1]), desc='Estimating P-wave parameters'):
@@ -310,7 +310,7 @@ class RotPol:
             "For SV-wave analysis, vp_range, vs_range, theta_range, and phi_range need to be specified!"
 
         ss = SearchSpace(wave_type='SV', vp=self.vp_range, vs=self.vs_range, theta=self.theta_range,
-                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface)
+                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface, search=self.search)
         if self.domain == 'f':
 
             for j in tqdm(range(S.shape[0] * S.shape[1]), desc='Estimating SV-wave parameters'):
@@ -346,7 +346,7 @@ class RotPol:
             "For SH-wave analysis, vs_range, theta_range, and phi_range need to be specified!"
 
         ss = SearchSpace(wave_type='SH', vs=self.vs_range, theta=self.theta_range,
-                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface)
+                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface, search=self.search)
         if self.domain == 'f':
 
             for j in tqdm(range(S.shape[0] * S.shape[1]), desc='Estimating SH-wave parameters'):
@@ -382,7 +382,7 @@ class RotPol:
             "For Rayleigh-wave analysis, vr_range, phi_range, and xi_range need to be specified!"
 
         ss = SearchSpace(wave_type='R', vr=self.vr_range, xi=self.xi_range,
-                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface)
+                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface, search=self.search)
         if self.domain == 'f':
 
             for j in tqdm(range(S.shape[0] * S.shape[1]), desc='Estimating Rayleigh wave parameters'):
@@ -418,7 +418,7 @@ class RotPol:
             "For Love-wave analysis, vl_range, and phi_range need to be specified!"
 
         ss = SearchSpace(wave_type='L', vl=self.vl_range,
-                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface)
+                         phi=self.phi_range, v_scal=self.v_scal, free_surface=self.free_surface, search=self.search)
         if self.domain == 'f':
             for j in tqdm(range(S.shape[0] * S.shape[1]), desc='Estimating Love wave parameters'):
                 loc = np.unravel_index(j, (S.shape[0], S.shape[1]))
@@ -651,7 +651,7 @@ class Estimator:
         self.wave_type = search_space.wave_type
         self.cpu_count = cpu_count
         self.search = search
-        self._set_l_shape()
+        if self.search == 'grid': self._set_l_shape()
         self.dop_min = dop_min
 
         self.music_nullspace, self.music_nullspace_threshold = music_nullspace, music_nullspace_threshold
@@ -1215,7 +1215,7 @@ class EstimatedWave(Wave):
 class SearchSpace:
 
     def __init__(self, wave_type=None, vp=None, vs=None, vl=None, vr=None, theta=None, phi=None, xi=None,
-                 free_surface=True, v_scal=1):
+                 free_surface=True, v_scal=1, search=None):
         """
         wave_type: WAVE TYPE
             'P' : P-wave
@@ -1229,92 +1229,94 @@ class SearchSpace:
         vr = [vr_min, vr_max, increment]: Rayleigh-wave velocity (m/s)
         theta = [theta_min, theta_max, increment] Inclination (degree), only for body waves
         xi = [xi_min, xi_max, increment]: Ellipticity angle (rad) for Rayleigh waves
+        search = search algorithm, 'grid' or 'global'
         """
 
         self.wave_type = wave_type
         self.vp, self.vs, self.vl, self.vr, self.theta, self.phi, self.xi = vp, vs, vl, vr, theta, phi, xi
         self.free_surface = free_surface
         self.v_scal = v_scal
+        self.search = search
         assert isinstance(wave_type, str)
 
         self.vp_vect, self.vs_vect, self.theta_vect, self.phi_vect, self.vr_vect, self.vl_vect, self.xi_vect = [
             None, None, None, None, None, None, None]
+        if self.search == 'grid':
+            if (wave_type == 'P' or wave_type == 'SV') and self.free_surface:
+                if self.vp is None or self.vs is None or self.theta is None or self.phi is None:
+                    sys.exit(
+                        f'To set up a free-surface {wave_type}-wave search space, search parameters for Vp, Vs, Theta, '
+                        'and Phi must be specified!')
+                self.vp_vect = np.arange(self.vp[0], self.vp[1] + self.vp[2], self.vp[2])
+                self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
+                self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.n_vp = self.vp_vect.size
+                self.n_vs = self.vs_vect.size
+                self.n_theta = self.theta_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_vp * self.n_vs * self.n_theta * self.n_phi
 
-        if (wave_type == 'P' or wave_type == 'SV') and self.free_surface:
-            if self.vp is None or self.vs is None or self.theta is None or self.phi is None:
-                sys.exit(
-                    f'To set up a free-surface {wave_type}-wave search space, search parameters for Vp, Vs, Theta, '
-                    'and Phi must be specified!')
-            self.vp_vect = np.arange(self.vp[0], self.vp[1] + self.vp[2], self.vp[2])
-            self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
-            self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.n_vp = self.vp_vect.size
-            self.n_vs = self.vs_vect.size
-            self.n_theta = self.theta_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_vp * self.n_vs * self.n_theta * self.n_phi
+            elif wave_type == 'P' and not self.free_surface:
+                if self.theta is None or self.phi is None:
+                    sys.exit('To set up a P-wave (inside the medium) search space, search parameters for Theta, '
+                             'and Phi must '
+                             'be specified!')
+                self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.n_theta = self.theta_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_phi * self.n_theta
 
-        elif wave_type == 'P' and not self.free_surface:
-            if self.theta is None or self.phi is None:
-                sys.exit('To set up a P-wave (inside the medium) search space, search parameters for Theta, '
-                         'and Phi must '
-                         'be specified!')
-            self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.n_theta = self.theta_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_phi * self.n_theta
+            elif (wave_type == 'SV' or wave_type == 'SH') and not self.free_surface:
+                if self.vs is None or self.theta is None or self.phi is None:
+                    sys.exit(f'To set up a {wave_type}-wave (inside the medium) search space, search parameters for Vs, '
+                             f'Theta, and Phi must '
+                             'be specified!')
+                self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
+                self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.n_vs = self.vs_vect.size
+                self.n_theta = self.theta_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_phi * self.n_vs * self.n_phi
 
-        elif (wave_type == 'SV' or wave_type == 'SH') and not self.free_surface:
-            if self.vs is None or self.theta is None or self.phi is None:
-                sys.exit(f'To set up a {wave_type}-wave (inside the medium) search space, search parameters for Vs, '
-                         f'Theta, and Phi must '
-                         'be specified!')
-            self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
-            self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.n_vs = self.vs_vect.size
-            self.n_theta = self.theta_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_phi * self.n_vs * self.n_phi
+            elif wave_type == 'SH' and self.free_surface:
+                if self.vs is None or self.theta is None or self.phi is None:
+                    sys.exit('To set up an SH-wave search space, search parameters for Vs, Theta, and Phi must '
+                             'be specified!')
+                self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
+                self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.n_vs = self.vs_vect.size
+                self.n_theta = self.theta_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_theta * self.n_vs * self.n_phi
 
-        elif wave_type == 'SH' and self.free_surface:
-            if self.vs is None or self.theta is None or self.phi is None:
-                sys.exit('To set up an SH-wave search space, search parameters for Vs, Theta, and Phi must '
-                         'be specified!')
-            self.vs_vect = np.arange(self.vs[0], self.vs[1] + self.vs[2], self.vs[2])
-            self.theta_vect = np.arange(self.theta[0], self.theta[1] + self.theta[2], self.theta[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.n_vs = self.vs_vect.size
-            self.n_theta = self.theta_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_theta * self.n_vs * self.n_phi
+            elif wave_type == 'R':
+                if self.vr is None or self.phi is None or self.xi is None:
+                    sys.exit('To set up a Rayleigh-wave search space, search parameters for Vr, Phi, and Xi must '
+                             'be specified!')
+                self.vr_vect = np.arange(self.vr[0], self.vr[1] + self.vr[2], self.vr[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.xi_vect = np.arange(self.xi[0], self.xi[1] + self.xi[2], self.xi[2])
+                self.n_xi = self.xi_vect.size
+                self.n_vr = self.vr_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_xi * self.n_vr * self.n_phi
 
-        elif wave_type == 'R':
-            if self.vr is None or self.phi is None or self.xi is None:
-                sys.exit('To set up a Rayleigh-wave search space, search parameters for Vr, Phi, and Xi must '
-                         'be specified!')
-            self.vr_vect = np.arange(self.vr[0], self.vr[1] + self.vr[2], self.vr[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.xi_vect = np.arange(self.xi[0], self.xi[1] + self.xi[2], self.xi[2])
-            self.n_xi = self.xi_vect.size
-            self.n_vr = self.vr_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_xi * self.n_vr * self.n_phi
+            elif wave_type == 'L':
+                if self.vl is None or self.phi is None:
+                    sys.exit('To set up a Love-wave search space, search parameters for Vl, and Phi must '
+                             'be specified!')
+                self.vl_vect = np.arange(self.vl[0], self.vl[1] + self.vl[2], self.vl[2])
+                self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
+                self.n_vl = self.vl_vect.size
+                self.n_phi = self.phi_vect.size
+                self.N = self.n_vl * self.n_phi
 
-        elif wave_type == 'L':
-            if self.vl is None or self.phi is None:
-                sys.exit('To set up a Love-wave search space, search parameters for Vl, and Phi must '
-                         'be specified!')
-            self.vl_vect = np.arange(self.vl[0], self.vl[1] + self.vl[2], self.vl[2])
-            self.phi_vect = np.arange(self.phi[0], self.phi[1] + self.phi[2], self.phi[2])
-            self.n_vl = self.vl_vect.size
-            self.n_phi = self.phi_vect.size
-            self.N = self.n_vl * self.n_phi
-
-        else:
-            sys.exit('Invalid wave type specified in SearchSpace object!')
+            else:
+                sys.exit('Invalid wave type specified in SearchSpace object!')
 
 
 def _compute_spec(traN, traE, traZ, rotN, rotE, rotZ, kind='spec', fmin=0, fmax=50, window_n=None, nfft=None,
