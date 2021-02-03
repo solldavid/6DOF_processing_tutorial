@@ -4,7 +4,7 @@ In this tutorial, you will learn how to process six degree-of-freedom ground-mot
 
 Sollberger, D., Igel, H., Schmelzbach, C., Edme, P., van Manen, D.-J., Bernauer, F., Yuan, S., Wassermann, J., Schreiber, U., and Robertsson, J. O. A. (2020): **Seismological processing of six degree-of-freedom ground-motion data**, *Sensors*, 20(23), 6904, https://doi.org/10.3390/s20236904.
 
-Please refer to this paper for further details on the algorithm used for the analysis. Additional information on 6DOF polarization analysis can be found in the following publication:
+Please refer to this paper for further details on the algorithm used in the analysis. Additional information on 6DOF polarization analysis can be found in the following publication:
 
 Sollberger, D., Greenhalgh, S. A., Schmelzbach, C., Van Renterghem, C., and Robertsson, J. O. A. (2018): **6-C polarization analysis using point measurements of translational and rotational ground-motion: theory and applications**, *Geophysical Journal International*, 213(1), https://doi.org/10.1093/gji/ggx542.
 
