@@ -586,6 +586,7 @@ class RotPol:
 
         for tr in trace_list:
             tr_stran, f_stran = s_transform(tr[0].data)
+            f_stran /= tr[0].stats.delta
             idx1 = (np.abs(f_stran - self.frange[0])).argmin()
             idx2 = (np.abs(f_stran - self.frange[1])).argmin()
             alpha_int = np.zeros((f_stran.shape[0], self.time.shape[0]))
