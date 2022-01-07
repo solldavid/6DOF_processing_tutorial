@@ -214,7 +214,7 @@ class RotPol:
                                 convolve(S[..., j, k].imag, w, mode='same') * 1j
                 elif self.spect["kind"] == 'cwt' or self.spect["kind"] == 'st':
                     print("Smoothing spectral matrices...\n ")
-                    w_f = hanning(nfsum + 2)[1:-1] * np.ones((nfsum, 1))
+                    w_f = (hanning(nfsum + 2)[1:-1] * np.ones((1, nfsum))).T
                     w_f /= np.sum(w_f, axis=0)
 
                     for j in range(S.shape[2]):
