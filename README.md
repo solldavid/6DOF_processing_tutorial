@@ -19,19 +19,25 @@ The code requires the following prerequisites:
 
 We recommend to install them using anaconda in a new environment via:
 
-$ conda create -n 6DOF python=3.7 
+```
+conda create -n 6DOF python=3.7 
 
-$ conda activate 6DOF
+conda activate 6DOF
 
-$ conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
+conda config --add channels conda-forge # This adds the conda-forge channel to your Anaconda configuration
 
-$ conda install obspy pytables tqdm jupyter
+conda install obspy pytables tqdm jupyter
+
+```
 
 Now clone this repository into your working directory:
 
-$ git clone https://github.com/solldavid/6DOF_processing_tutorial
+```
+git clone https://github.com/solldavid/6DOF_processing_tutorial
 
-$ cd 6DOF_processing_tutorial
+cd 6DOF_processing_tutorial
+
+```
 
 You can now start the notebook by:
 
