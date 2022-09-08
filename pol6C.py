@@ -10,14 +10,14 @@ import multiprocessing as mp
 from scipy.optimize import differential_evolution
 from obspy.signal.tf_misfit import cwt
 from obspy.signal.util import next_pow_2
-from scipy.signal import spectrogram, hanning, convolve, hilbert
-from scipy.linalg import det, toeplitz
 from obspy import Stream, Trace
 from datetime import datetime
 import matplotlib.pyplot as plt
 import tables as tb
 from matplotlib import colors
 from scipy.interpolate import interp2d
+from scipy.signal import spectrogram, hanning, convolve, hilbert
+from scipy.linalg import det, toeplitz
 from tqdm import tqdm
 
 
