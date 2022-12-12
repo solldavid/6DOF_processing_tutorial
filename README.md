@@ -1,5 +1,5 @@
 # READ
-**Please note that this code is no longer supported. A more efficient and stable version of the code is now included in the TwistPy toolbox. Please refer to https://twistpy.org and specifically, this [example](https://twistpy.org/examples/alaska_wave_parameter_estimation.html#sphx-glr-examples-alaska-wave-parameter-estimation-py "6DOF processing example"), which reproduces the example from this tutorial.**
+**Please note that this code is no longer supported/maintained. A more efficient and stable version of the code is now included in the TwistPy toolbox. Please refer to https://twistpy.org and specifically, this [example](https://twistpy.org/examples/alaska_wave_parameter_estimation.html#sphx-glr-examples-alaska-wave-parameter-estimation-py "6DOF processing example"), which reproduces the example from this tutorial.**
 
 # Seismological processing of six degree-of-freedom ground-motion data
 
